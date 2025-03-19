@@ -35,6 +35,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint
 
+    env:
+      DYNAMODB_HOST: http://dynamodb:8000
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: fakeKeyId
+      AWS_SECRET_ACCESS_KEY: fakeSecretAccessKey
+      PORT: 5000
+
     steps:
     - uses: actions/checkout@v3
 
