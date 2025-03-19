@@ -1,0 +1,33 @@
+services:
+  app:
+    platform: linux/amd64
+    build: .
+    volumes:
+      - ./api:/app/api
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development # Enables hot reload
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - SERVERLESS_ACCESS_KEY=${SERVERLESS_ACCESS_KEY}
+      - PORT=${PORT}
+      - DYNAMODB_HOST=${DYNAMODB_HOST}
+    depends_on:
+      - dynamodb
+
+  dynamodb:
+    image: amazon/dynamodb-local:latest
+    container_name: dynamodb
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
+    volumes:
+      - dynamodb-data:/home/dynamodblocal/data
+    working_dir: /home/dynamodblocal
+    user: root
+
+volumes:
+  dynamodb-data:
