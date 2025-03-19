@@ -1,10 +1,13 @@
 import os
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, redirect, request, url_for
 
 from .models import UserModel
+from .views import bp as views_bp
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key")
+app.register_blueprint(views_bp)
 
 
 @app.route("/health", methods=["GET"])
@@ -51,6 +54,11 @@ def delete_user(user_id):
         return jsonify({"message": "User deleted"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/")
+def index():
+    return redirect(url_for("views.index"))
 
 
 if __name__ == "__main__":

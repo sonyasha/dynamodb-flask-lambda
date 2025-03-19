@@ -28,7 +28,6 @@ dynamodb_resource = boto3.resource(
 
 
 def create_user_table():
-    TABLE_NAME = "UserTable"
 
     try:
         dynamodb_client.describe_table(TableName=TABLE_NAME)

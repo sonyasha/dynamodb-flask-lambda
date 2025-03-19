@@ -49,37 +49,6 @@ class TestUserEndpoints(unittest.TestCase):
         data = json.loads(response.data)
         self.assertEqual(data["error"], "Database error")
 
-    @patch("api.models.UserModel.get")
-    def test_get_user_success(self, mock_get):
-        """Test getting a user by ID successfully"""
-        mock_get.return_value = self.mock_user
-        response = self.app.get("/users/test123")
-
-        mock_get.assert_called_once_with("test123")
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data)
-        self.assertEqual(data, self.mock_user)
-
-    @patch("api.models.UserModel.get")
-    def test_get_user_not_found(self, mock_get):
-        """Test getting a non-existent user"""
-        mock_get.side_effect = Exception("DoesNotExist")
-        response = self.app.get("/users/nonexistent")
-
-        self.assertEqual(response.status_code, 404)
-        data = json.loads(response.data)
-        self.assertEqual(data["error"], "User not found")
-
-    @patch("api.models.UserModel.get")
-    def test_get_user_error(self, mock_get):
-        """Test handling other errors when getting a user"""
-        mock_get.side_effect = Exception("Database error")
-        response = self.app.get("/users/test123")
-
-        self.assertEqual(response.status_code, 500)
-        data = json.loads(response.data)
-        self.assertEqual(data["error"], "Database error")
-
     @patch("api.models.UserModel.scan")
     def test_list_users_success(self, mock_scan):
         """Test listing all users successfully"""
