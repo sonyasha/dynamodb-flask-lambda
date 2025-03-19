@@ -7,7 +7,6 @@ services:
     ports:
       - "${PORT}:${PORT}"
     environment:
-      - API_KEY=${API_KEY}
       - FLASK_DEBUG=1
       - FLASK_ENV=development # Enables hot reload
       - AWS_REGION=${AWS_REGION}
