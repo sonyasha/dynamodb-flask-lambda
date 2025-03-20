@@ -41,6 +41,8 @@ functions:
     handler: wsgi_handler.handler
     environment:
       FLASK_DEBUG: 0
+      TABLE_NAME:
+        Ref: UserTable
     events:
     - http: ANY /
     - http: 'ANY {proxy+}'
@@ -51,11 +53,11 @@ resources:
       Properties:
         AttributeDefinitions:
 
-        - AttributeName: userId
+        - AttributeName: user_id
           AttributeType: S
         KeySchema:
 
-        - AttributeName: userId
+        - AttributeName: user_id
           KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
