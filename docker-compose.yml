@@ -15,6 +15,7 @@ services:
       - SERVERLESS_ACCESS_KEY=${SERVERLESS_ACCESS_KEY}
       - PORT=${PORT}
       - DYNAMODB_HOST=${DYNAMODB_HOST}
+      - IS_OFFLINE=1
     depends_on:
       - dynamodb
 
