@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-TABLE_NAME = "UserTable"
+TABLE_NAME = os.environ.get("TABLE_NAME", "user_table")
 IS_OFFLINE = os.environ.get("IS_OFFLINE")
 
 if IS_OFFLINE:
@@ -15,17 +15,17 @@ if IS_OFFLINE:
     dynamodb_client = boto3.client(
         "dynamodb",
         endpoint_url=os.environ.get("DYNAMODB_HOST", None),
-        region_name=os.environ["AWS_REGION"],
-        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID", "fake-key"),
+        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY", "fake-secret"),
     )
 
     dynamodb_resource = boto3.resource(
         "dynamodb",
         endpoint_url=os.environ.get("DYNAMODB_HOST", None),
-        region_name=os.environ["AWS_REGION"],
-        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID", "fake-key"),
+        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY", "fake-secret"),
     )
 else:
     # For AWS Lambda execution
@@ -49,9 +49,11 @@ def create_user_table():
     try:
         dynamodb_client.create_table(
             TableName=TABLE_NAME,
-            KeySchema=[{"AttributeName": "userId", "KeyType": "HASH"}],  # Partition key
+            KeySchema=[
+                {"AttributeName": "user_id", "KeyType": "HASH"}
+            ],  # Partition key
             AttributeDefinitions=[
-                {"AttributeName": "userId", "AttributeType": "S"}  # String
+                {"AttributeName": "user_id", "AttributeType": "S"}  # String
             ],
             BillingMode="PAY_PER_REQUEST",
         )

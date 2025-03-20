@@ -19,7 +19,7 @@ def health_check():
 def create_user():
     data = request.json
     user = {"user_id": data["user_id"], "name": data["name"], "email": data["email"]}
-
+    print("USER DATA app", user)
     try:
         UserModel.create(user)
         return jsonify({"message": "User created", "user_id": data["user_id"]}), 201
