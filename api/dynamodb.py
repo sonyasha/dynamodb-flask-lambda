@@ -11,7 +11,7 @@ TABLE_NAME = os.environ.get("TABLE_NAME", "user_table")
 IS_OFFLINE = os.environ.get("IS_OFFLINE")
 
 if IS_OFFLINE:
-    # For local development
+    # For local development AWS credentials need to be passed, but values can be faked
     dynamodb_client = boto3.client(
         "dynamodb",
         endpoint_url=os.environ.get("DYNAMODB_HOST", None),
