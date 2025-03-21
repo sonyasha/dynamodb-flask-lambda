@@ -7,24 +7,30 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-TABLE_NAME = "UserTable"
+TABLE_NAME = os.environ.get("TABLE_NAME", "user_table")
+IS_OFFLINE = os.environ.get("IS_OFFLINE")
 
+if IS_OFFLINE:
+    # For local development AWS credentials need to be passed, but values can be faked
+    dynamodb_client = boto3.client(
+        "dynamodb",
+        endpoint_url=os.environ.get("DYNAMODB_HOST", None),
+        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID", "fake-key"),
+        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY", "fake-secret"),
+    )
 
-dynamodb_client = boto3.client(
-    "dynamodb",
-    endpoint_url=os.environ.get("DYNAMODB_HOST", None),
-    region_name=os.environ["AWS_REGION"],
-    aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
-    aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
-)
-
-dynamodb_resource = boto3.resource(
-    "dynamodb",
-    endpoint_url=os.environ.get("DYNAMODB_HOST", None),
-    region_name=os.environ["AWS_REGION"],
-    aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
-    aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
-)
+    dynamodb_resource = boto3.resource(
+        "dynamodb",
+        endpoint_url=os.environ.get("DYNAMODB_HOST", None),
+        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID", "fake-key"),
+        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY", "fake-secret"),
+    )
+else:
+    # For AWS Lambda execution
+    dynamodb_client = boto3.client("dynamodb")
+    dynamodb_resource = boto3.resource("dynamodb")
 
 
 def create_user_table():
@@ -44,8 +50,8 @@ def create_user_table():
         dynamodb_client.create_table(
             TableName=TABLE_NAME,
             KeySchema=[
-                {"AttributeName": "user_id", "KeyType": "HASH"}  # Partition key
-            ],
+                {"AttributeName": "user_id", "KeyType": "HASH"}
+            ],  # Partition key
             AttributeDefinitions=[
                 {"AttributeName": "user_id", "AttributeType": "S"}  # String
             ],
@@ -75,5 +81,7 @@ def get_user_table():
 
 
 def create_tables():
-    create_user_table()
-    logger.info("All tables created successfully")
+    if IS_OFFLINE:
+        create_user_table()
+        logger.info("All tables created successfully")
+    return

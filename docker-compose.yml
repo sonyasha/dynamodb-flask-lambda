@@ -14,7 +14,8 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - SERVERLESS_ACCESS_KEY=${SERVERLESS_ACCESS_KEY}
       - PORT=${PORT}
-      - DYNAMODB_HOST=${DYNAMODB_HOST}
+      - DYNAMODB_HOST=http://dynamodb:8000
+      - IS_OFFLINE=1
     depends_on:
       - dynamodb
 
